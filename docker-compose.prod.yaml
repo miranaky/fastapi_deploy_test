@@ -1,0 +1,46 @@
+version: "3.2"
+
+services:
+  nginx:
+    container_name: nginx:alpine
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+      - conf.d/nginx:/etc/nginx/conf.d
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./app:/app
+    ports:
+      - 8008:8000
+    depends_on:
+      - mongo
+
+  mongodb:
+    image: mongo:5.0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - .db/data:/data/db
+
+  mongodb-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${{MONGO_EXPRESS_USER}}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${{MONGO_EXPRESS_PASSWORD}}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${MONGO_DB_PATH}
