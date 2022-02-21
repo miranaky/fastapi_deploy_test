@@ -8,10 +8,12 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./app:/app
+      - ./data:/data
     ports:
       - 8008:8000
     depends_on:
-      - mongo
+      - mongodb
+
   mongodb:
     image: mongo:5.0
     restart: always
@@ -20,6 +22,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - .db/data:/data/db
+
   mongodb-express:
     image: mongo-express
     restart: always

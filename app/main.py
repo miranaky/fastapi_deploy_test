@@ -1,10 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 
-from app.routes.student import router as StudentRouter
+# from app.routes.student import router as StudentRouter
+from app.routes.file import router as FileRouter
 
 app = FastAPI()
-app.include_router(StudentRouter, tags=["student"], prefix="/student")
+# app.include_router(StudentRouter, tags=["student"], prefix="/student")
+app.include_router(FileRouter, tags=["file"], prefix="/dataset")
 
 
 @app.get("/", tags=["Root"])

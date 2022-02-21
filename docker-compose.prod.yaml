@@ -5,12 +5,12 @@ services:
     image: nginx:alpine
     container_name: nginx
     restart: always
-    depends_on:
-      - app
     ports:
       - "80:80"
     volumes:
-      - conf.d/nginx:/etc/nginx/conf.d
+      - ./conf.d/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
 
   app:
     build:
@@ -21,7 +21,7 @@ services:
     volumes:
       - ./app:/app
     ports:
-      - 8008:8000
+      - 8000:8000
     depends_on:
       - mongodb
 
