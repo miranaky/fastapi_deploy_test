@@ -38,7 +38,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          script: mkdir -p /home/${{ secrets.USERNAME }}/src/white_rabbit
+          script: |
+            mkdir -p /home/${{ secrets.USERNAME }}/src/white_rabbit
+            mkdir -p /home/${{ secrets.USERNAME }}/db/data
 
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@5.1
