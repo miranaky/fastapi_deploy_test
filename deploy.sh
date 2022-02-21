@@ -26,5 +26,4 @@ fi
 
 
 echo "start docker-compose up"
-docker-compose -f /home/ec2-user/src/white_rabbit/docker-compose.prod.yaml --build 
-docker-compose -f /home/ec2-user/src/white_rabbit/docker-compose.prod.yaml up -d
+docker-compose -f /home/ec2-user/src/white_rabbit/docker-compose.prod.yaml up --build --force-recreate --renew-anon-volumes -d
