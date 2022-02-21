@@ -24,5 +24,5 @@ if [ $? -eq 0 ];then
 sudo usermod -a -G docker ec2-user
 fi
 
-echo "start docker-compose up: ubuntu"
-sudo docker-compose -f /home/ec2-user/src/white_rabbit/docker-compose.prod.yml up --build -d
+echo "start docker-compose up"
+docker-compose -f /home/ec2-user/src/white_rabbit/docker-compose.prod.yaml up --build -d

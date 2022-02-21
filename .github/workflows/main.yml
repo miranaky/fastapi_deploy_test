@@ -1,0 +1,59 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to EC2
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ github.event.inputs.sha }}
+
+      - name: create env file
+        run: |
+          touch .env
+          echo "${{ secrets.ENVS }}" >> .env
+
+      - name: create remote directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: mkdir -p /home/${{ secrets.USERNAME }}/src/white_rabbit
+
+      - name: copy source via ssh key
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          remote_path: /home/${{ secrets.USERNAME }}/src/white_rabbit/
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.KEY }}
+
+      - name: executing ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            sh /home/${{ secrets.USERNAME }}/src/white_rabbit/deploy.sh
